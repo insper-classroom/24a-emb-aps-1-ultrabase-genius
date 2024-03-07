@@ -211,9 +211,9 @@ int main() {
 
     gpio_set_irq_enabled_with_callback(
         BTN_B, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
-    gpio_set_irq_enabled(BTN_G, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_FALL, true);
-    gpio_set_irq_enabled(BTN_R, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_FALL, true);
-    gpio_set_irq_enabled(BTN_Y, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled(BTN_G, GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled(BTN_R, GPIO_IRQ_EDGE_FALL, true);
+    gpio_set_irq_enabled(BTN_Y, GPIO_IRQ_EDGE_FALL, true);
 
     int last_blue_flag = 0;
     int last_green_flag = 0;
