@@ -7,10 +7,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "hardware/gpio.h"
 #include "pico/stdlib.h"
 #include "hardware/flash.h"
+
+#include "aux.h"
 
 
 #define DEBOUNCE_TIME 300
@@ -44,7 +47,6 @@
 #define D2 13
 #define D1 11
 
-#define HIGH_SCORE_ADDRESS 0x10000 
 
 const int INPUT_TIMEOUT = 10000;
 
@@ -313,6 +315,28 @@ void display_handler(int n, int state){
     }
 }
 
+void intro() {
+    int tempo = 144;
+    int notes = sizeof(melody) / sizeof(melody[0]) / 2;
+    int wholenote = (60000 * 4) / tempo;
+    int divider = 0, noteDuration = 0;
+
+    for (int thisNote = 0; thisNote < notes * 2; thisNote += 2) {
+        divider = melody[thisNote + 1];
+        if (divider > 0) {
+            noteDuration = wholenote / divider;
+        } else if (divider < 0) {
+            noteDuration = wholenote / abs(divider);
+            noteDuration *= 1.5; 
+        }
+
+        int playDuration = noteDuration * 0.9;
+        emit_sound(melody[thisNote], (int)playDuration);
+        sleep_ms(noteDuration - (int)playDuration);
+    }
+}
+
+
 int main() {
     /* Game state management:
      * --> (0) idle
@@ -405,15 +429,14 @@ int main() {
         printf("score");
         
         if (game_state == 3){
-        display_handler(score,display_state);
-        display_state = (display_state<3) ? (display_state+1): 0;
+            display_handler(score,display_state);
         } else{
             gpio_put(D1, 0);
             gpio_put(D2, 0);
             gpio_put(D3, 0);
             gpio_put(D4, 0);
         }
-
+        display_state = (display_state<3) ? (display_state+1): 0;
         /* Detect if there have been any button clicks */
         if (blue_flag) {
             blue_flag = 0;
@@ -465,6 +488,7 @@ int main() {
 
         if (game_state == 1) {
             // printf("[1] Start introduction.\n");
+            intro();
 
             for (int i = 0; i < 4; i++) {
                 gpio_put(LED_B, 1);
@@ -532,6 +556,11 @@ int main() {
             if (current_input_id > score) {
                 // This is an indicator that we have to go to the output state.
                 // printf("You got it! Next sequence up ahead...\n");
+                gpio_put(D1, 0);
+                gpio_put(D2, 0);
+                gpio_put(D3, 0);
+                gpio_put(D4, 0);
+                display_state = (display_state<3) ? (display_state+1): 0;
                 current_input_id = 0;
                 score++;
                 listening_to_clicks = 0;
@@ -572,6 +601,10 @@ int main() {
             }
 
             if (clicked_button_code != -1) {
+                gpio_put(D1, 0);
+                gpio_put(D2, 0);
+                gpio_put(D3, 0);
+                gpio_put(D4, 0);
                 last_input_sent_at = to_ms_since_boot(get_absolute_time());
                 printf("YOU PRESSED: %d\n", clicked_button_code);
                 printf("RIGHT ANSWER: %d\n", sequence[current_input_id]);
