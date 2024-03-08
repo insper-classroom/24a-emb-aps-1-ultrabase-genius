@@ -47,7 +47,7 @@
 #define D1 11
 
 
-const int INPUT_TIMEOUT = 10000;
+//const int INPUT_TIMEOUT = 10000;
 
 volatile int listening_to_clicks = 1;
 volatile int blue_flag = 0;
@@ -424,6 +424,7 @@ int main() {
     int current_input_id = 0;
     uint32_t last_input_sent_at = 0;
 
+    const int INPUT_TIMEOUT = 10000;
     while (true) {
         printf("score");
         
