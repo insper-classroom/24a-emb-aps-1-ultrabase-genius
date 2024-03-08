@@ -6,28 +6,45 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "hardware/gpio.h"
 #include "pico/stdlib.h"
+#include "hardware/flash.h"
+
 
 #define DEBOUNCE_TIME 300
 
-#define LED_B 28
-#define LED_G 27
-#define LED_R 22
-#define LED_Y 20
+#define LED_B 12
+#define LED_G 15
+#define LED_R 10
+#define LED_Y 14
 
-#define BTN_B 7
-#define BTN_G 9
-#define BTN_R 10
-#define BTN_Y 13
+#define BTN_B 3
+#define BTN_G 5
+#define BTN_R 2
+#define BTN_Y 4
 
 #define B_FREQ 261
 #define G_FREQ 293
 #define R_FREQ 329
 #define Y_FREQ 392
 
-#define BUZZER 5
+#define BUZZER 6
+
+#define D4 16
+#define A 17
+#define B 18
+#define C 19
+#define D 20
+#define E 21
+#define F 22
+#define G 28
+#define D3 27
+#define D2 13
+#define D1 11
+
+#define HIGH_SCORE_ADDRESS 0x10000 
 
 const int INPUT_TIMEOUT = 10000;
 
@@ -166,6 +183,136 @@ int button_code_to_led_pin(int button_code) {
     return -1;
 }
 
+void display_handler(int n, int state){
+    
+    int digit;
+    if (state == 0) {
+        digit = n % 10; // last digit
+    } else {
+        int divisor = (int)pow(10, state);
+        digit = (n / divisor) % 10;
+    }
+
+
+    if (digit == 0){
+            gpio_put(A, 0);
+            gpio_put(B, 0);
+            gpio_put(C, 0);
+            gpio_put(D, 0);
+            gpio_put(E, 0);
+            gpio_put(F, 0);
+            gpio_put(G, 1);
+    }            
+    if (digit == 1){
+            gpio_put(A, 1);
+            gpio_put(B, 0);
+            gpio_put(C, 0);
+            gpio_put(D, 1);
+            gpio_put(E, 1);
+            gpio_put(F, 1);
+            gpio_put(G, 1);
+    }
+    if (digit == 2){
+            gpio_put(A, 0);
+            gpio_put(B, 0);
+            gpio_put(C, 1);
+            gpio_put(D, 0);
+            gpio_put(E, 0);
+            gpio_put(F, 1);
+            gpio_put(G, 0);
+    }
+    if (digit == 3){
+        gpio_put(A, 0);
+        gpio_put(B, 0);
+        gpio_put(C, 0);
+        gpio_put(D, 0);
+        gpio_put(E, 1);
+        gpio_put(F, 1);
+        gpio_put(G, 0);
+    }
+    if (digit == 4){
+            gpio_put(A, 1);
+            gpio_put(B, 0);
+            gpio_put(C, 0);
+            gpio_put(D, 1);
+            gpio_put(E, 1);
+            gpio_put(F, 0);
+            gpio_put(G, 0);
+    }
+    if (digit == 5){
+            gpio_put(A, 0);
+            gpio_put(B, 1);
+            gpio_put(C, 0);
+            gpio_put(D, 0);
+            gpio_put(E, 1);
+            gpio_put(F, 0);
+            gpio_put(G, 0);
+    }
+    if (digit == 6){
+            gpio_put(A, 0);
+            gpio_put(B, 1);
+            gpio_put(C, 0);
+            gpio_put(D, 0);
+            gpio_put(E, 0);
+            gpio_put(F, 0);
+            gpio_put(G, 0);
+    }
+    if (digit == 7){
+            gpio_put(A, 0);
+            gpio_put(B, 0);
+            gpio_put(C, 0);
+            gpio_put(D, 1);
+            gpio_put(E, 1);
+            gpio_put(F, 1);
+            gpio_put(G, 1);
+    }
+    if (digit == 8){
+            gpio_put(A, 0);
+            gpio_put(B, 0);
+            gpio_put(C, 0);
+            gpio_put(D, 0);
+            gpio_put(E, 0);
+            gpio_put(F, 0);
+            gpio_put(G, 0);
+    }
+    if (digit == 9){
+            gpio_put(A, 0);
+            gpio_put(B, 0);
+            gpio_put(C, 0);
+            gpio_put(D, 0);
+            gpio_put(E, 1);
+            gpio_put(F, 0);
+            gpio_put(G, 0);
+    }
+
+    if (state == 0){
+        gpio_put(D4, 1);
+        gpio_put(D3, 0);
+        gpio_put(D2, 0);
+        gpio_put(D1, 0);
+    } 
+    if (state == 1){
+        gpio_put(D3, 1);
+        gpio_put(D4, 0);
+        gpio_put(D2, 0);
+        gpio_put(D1, 0);
+
+    }
+    if (state == 2){
+        gpio_put(D2, 1);
+        gpio_put(D4, 0);
+        gpio_put(D3, 0);
+        gpio_put(D1, 0);
+    } 
+    if (state == 3){
+        gpio_put(D1, 1);
+        gpio_put(D2, 0);
+        gpio_put(D3, 0);
+        gpio_put(D4, 0);
+
+    }
+}
+
 int main() {
     /* Game state management:
      * --> (0) idle
@@ -177,6 +324,29 @@ int main() {
     int score = 0;
 
     stdio_init_all();
+
+    gpio_init(D4);
+    gpio_init(D3);
+    gpio_init(D2);
+    gpio_init(D1);
+    gpio_init(A);
+    gpio_init(B);
+    gpio_init(C);
+    gpio_init(D);
+    gpio_init(E);
+    gpio_init(F);
+    gpio_init(G);
+    gpio_set_dir(D4, GPIO_OUT);
+    gpio_set_dir(D3, GPIO_OUT);
+    gpio_set_dir(D2, GPIO_OUT);
+    gpio_set_dir(D1, GPIO_OUT);
+    gpio_set_dir(A, GPIO_OUT);
+    gpio_set_dir(B, GPIO_OUT);
+    gpio_set_dir(C, GPIO_OUT);
+    gpio_set_dir(D, GPIO_OUT);
+    gpio_set_dir(E, GPIO_OUT);
+    gpio_set_dir(F, GPIO_OUT);
+    gpio_set_dir(G, GPIO_OUT);
 
     gpio_init(LED_B);
     gpio_set_dir(LED_B, GPIO_OUT);
@@ -225,12 +395,24 @@ int main() {
     bool red_click = false;
     bool yellow_click = false;
 
+    int display_state = 0;
+
     /* Game state (3) variables: input control */
     int current_input_id = 0;
     uint32_t last_input_sent_at = 0;
 
     while (true) {
-        printf("qualquer merda...");
+        printf("score");
+        
+        if (game_state == 3){
+        display_handler(score,display_state);
+        display_state = (display_state<3) ? (display_state+1): 0;
+        } else{
+            gpio_put(D1, 0);
+            gpio_put(D2, 0);
+            gpio_put(D3, 0);
+            gpio_put(D4, 0);
+        }
 
         /* Detect if there have been any button clicks */
         if (blue_flag) {
@@ -450,5 +632,6 @@ int main() {
             game_state = 4;
             continue;
         }
+        
     }
 }

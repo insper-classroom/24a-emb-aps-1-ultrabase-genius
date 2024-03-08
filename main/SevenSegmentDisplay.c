@@ -19,8 +19,8 @@
 #define F 22
 #define G 28
 #define D3 27
-#define D2 15
-#define D1 14
+#define D2 13
+#define D1 11
 
 void display_handler(int n, int state){
     
