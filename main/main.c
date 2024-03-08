@@ -11,7 +11,6 @@
 
 #include "hardware/gpio.h"
 #include "pico/stdlib.h"
-#include "hardware/flash.h"
 
 #include "aux.h"
 
@@ -109,11 +108,11 @@ void emit_sound(int frequency, int duration) {
     }
 }
 
-void led_beep(int led_pin, int frequency, int duration) {
-    gpio_put(led_pin, 1);
-    emit_sound(frequency, duration);
-    gpio_put(led_pin, 0);
-}
+// void led_beep(int led_pin, int frequency, int duration) {
+//     gpio_put(led_pin, 1);
+//     emit_sound(frequency, duration);
+//     gpio_put(led_pin, 0);
+// }
 
 // void blue_beep() {
 //     uint32_t comparison_time1;
@@ -169,13 +168,13 @@ int get_random_button_code() {
     return rand() % 4;
 }
 
-int button_code_to_frequency(int button_code) {
-    if (button_code == 0) return B_FREQ;
-    if (button_code == 1) return G_FREQ;
-    if (button_code == 2) return R_FREQ;
-    if (button_code == 3) return Y_FREQ;
-    return -1;
-}
+// int button_code_to_frequency(int button_code) {
+//     if (button_code == 0) return B_FREQ;
+//     if (button_code == 1) return G_FREQ;
+//     if (button_code == 2) return R_FREQ;
+//     if (button_code == 3) return Y_FREQ;
+//     return -1;
+// }
 
 int button_code_to_led_pin(int button_code) {
     if (button_code == 0) return LED_B;
@@ -319,11 +318,10 @@ void intro() {
     int tempo = 144;
     int notes = sizeof(melody) / sizeof(melody[0]) / 2;
     int wholenote = (60000 * 4) / tempo;
-    int divider;
     int noteDuration;
 
     for (int thisNote = 0; thisNote < notes * 2; thisNote += 2) {
-        divider = melody[thisNote + 1];
+        int divider = melody[thisNote + 1];
         if (divider > 0) {
             noteDuration = wholenote / divider;
         } else if (divider < 0) {
