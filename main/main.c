@@ -115,54 +115,54 @@ void led_beep(int led_pin, int frequency, int duration) {
     gpio_put(led_pin, 0);
 }
 
-void blue_beep() {
-    uint32_t comparison_time1;
-    comparison_time1 = to_ms_since_boot(get_absolute_time());
-    for (int x = 0; x < 300; x++) {
-        gpio_put(BUZZER, 1);
-        sleep_us(1000);
-        gpio_put(BUZZER, 0);
-        sleep_us(1000);
-    }
-    while (comparison_time1 + 1000 > to_ms_since_boot(get_absolute_time())) {
-    }
-}
-void green_beep() {
-    uint32_t comparison_time2;
-    comparison_time2 = to_ms_since_boot(get_absolute_time());
-    for (int x = 0; x < 300; x++) {
-        gpio_put(BUZZER, 1);
-        sleep_us(666);
-        gpio_put(BUZZER, 0);
-        sleep_us(666);
-    }
-    while (comparison_time2 + 1000 > to_ms_since_boot(get_absolute_time())) {
-    }
-}
-void red_beep() {
-    uint32_t comparison_time3;
-    comparison_time3 = to_ms_since_boot(get_absolute_time());
-    for (int x = 0; x < 300; x++) {
-        gpio_put(BUZZER, 1);
-        sleep_us(444);
-        gpio_put(BUZZER, 0);
-        sleep_us(444);
-    }
-    while (comparison_time3 + 1000 > to_ms_since_boot(get_absolute_time())) {
-    }
-}
-void yellow_beep() {
-    uint32_t comparison_time4;
-    comparison_time4 = to_ms_since_boot(get_absolute_time());
-    for (int x = 0; x < 300; x++) {
-        gpio_put(BUZZER, 1);
-        sleep_us(290);
-        gpio_put(BUZZER, 0);
-        sleep_us(290);
-    }
-    while (comparison_time4 + 1000 > to_ms_since_boot(get_absolute_time())) {
-    }
-}
+// void blue_beep() {
+//     uint32_t comparison_time1;
+//     comparison_time1 = to_ms_since_boot(get_absolute_time());
+//     for (int x = 0; x < 300; x++) {
+//         gpio_put(BUZZER, 1);
+//         sleep_us(1000);
+//         gpio_put(BUZZER, 0);
+//         sleep_us(1000);
+//     }
+//     while (comparison_time1 + 1000 > to_ms_since_boot(get_absolute_time())) {
+//     }
+// }
+// void green_beep() {
+//     uint32_t comparison_time2;
+//     comparison_time2 = to_ms_since_boot(get_absolute_time());
+//     for (int x = 0; x < 300; x++) {
+//         gpio_put(BUZZER, 1);
+//         sleep_us(666);
+//         gpio_put(BUZZER, 0);
+//         sleep_us(666);
+//     }
+//     while (comparison_time2 + 1000 > to_ms_since_boot(get_absolute_time())) {
+//     }
+// }
+// void red_beep() {
+//     uint32_t comparison_time3;
+//     comparison_time3 = to_ms_since_boot(get_absolute_time());
+//     for (int x = 0; x < 300; x++) {
+//         gpio_put(BUZZER, 1);
+//         sleep_us(444);
+//         gpio_put(BUZZER, 0);
+//         sleep_us(444);
+//     }
+//     while (comparison_time3 + 1000 > to_ms_since_boot(get_absolute_time())) {
+//     }
+// }
+// void yellow_beep() {
+//     uint32_t comparison_time4;
+//     comparison_time4 = to_ms_since_boot(get_absolute_time());
+//     for (int x = 0; x < 300; x++) {
+//         gpio_put(BUZZER, 1);
+//         sleep_us(290);
+//         gpio_put(BUZZER, 0);
+//         sleep_us(290);
+//     }
+//     while (comparison_time4 + 1000 > to_ms_since_boot(get_absolute_time())) {
+//     }
+// }
 
 int get_random_button_code() {
     srand(to_ms_since_boot(get_absolute_time()));
@@ -319,7 +319,8 @@ void intro() {
     int tempo = 144;
     int notes = sizeof(melody) / sizeof(melody[0]) / 2;
     int wholenote = (60000 * 4) / tempo;
-    int divider = 0, noteDuration = 0;
+    int divider;
+    int noteDuration;
 
     for (int thisNote = 0; thisNote < notes * 2; thisNote += 2) {
         divider = melody[thisNote + 1];
